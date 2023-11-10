@@ -24,8 +24,14 @@ def generate_meme(path=None, body=None, author=None):
 
     if body is None:
         Ingestor.register_defaults()
-        quotes = Ingestor.scan(current_dir / "_data/DogQuotes")
+        quote_files = ['/_data/DogQuotes/DogQuotesTXT.txt',
+                   '/_data/DogQuotes/DogQuotesDOCX.docx',
+                   '/_data/DogQuotes/DogQuotesPDF.pdf',
+                   '/_data/DogQuotes/DogQuotesCSV.csv']
+        quote_files = [str(current_dir) + file for file in quote_files]
+        quotes = [q for file in quote_files for q in Ingestor.get_qoute_models_from_file(Path(file))]
         quote = random.choice(quotes)
+
     else:
         if author is None:
             raise Exception("Author Required if Body is Used")
