@@ -46,17 +46,21 @@ def meme_form():
 @app.route('/create', methods=['POST'])
 def meme_post():
     """Create a user defined meme."""
-    image_url = request.form.get("image_url")
-    body = request.form.get("body")
-    author = request.form.get("author")
-    current_dir = Path(__file__).parent
-    response = requests.get(image_url, allow_redirects=True)
-    with tempfile.NamedTemporaryFile(suffix=".jpg") as tf:
-        tf.write(response.content)
-        meme_path = meme.make_meme(Path(tf.name), body, author)
-        relpath = str(current_dir)
-        meme_path = os.path.relpath(meme_path, relpath)
-    return render_template("meme.html", path=Path(meme_path))
+    try:
+        image_url = request.form.get("image_url")
+        body = request.form.get("body")
+        author = request.form.get("author")
+        current_dir = Path(__file__).parent
+        response = requests.get(image_url, allow_redirects=True)
+        with tempfile.NamedTemporaryFile(suffix=".jpg") as tf:
+            tf.write(response.content)
+            meme_path = meme.make_meme(Path(tf.name), body, author)
+            relpath = str(current_dir)
+            meme_path = os.path.relpath(meme_path, relpath)
+        return render_template("meme.html", path=Path(meme_path))
+    except Exception as e:
+        return f'error occured {e}', 400
+
 
 if __name__ == "__main__":
     app.run()
